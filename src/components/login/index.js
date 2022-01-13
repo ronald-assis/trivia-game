@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 
 export class Login extends Component {
   constructor() {
     super();
 
+    this.testFields = this.testFields.bind(this);
+    this.handleInput = this.handleInput.bind(this);
+
     this.state = {
       email: '',
       name: '',
     };
-    this.testFields = this.testFields.bind(this);
-    this.handleInput = this.handleInput.bind(this);
   }
 
   testFields() {
@@ -33,6 +35,7 @@ export class Login extends Component {
 
   render() {
     const { name, email } = this.state;
+
     return (
       <>
         <input
@@ -58,6 +61,11 @@ export class Login extends Component {
           type="submit"
           disabled={ this.testFields() }
           data-testid="btn-play"
+          onClick={ () => {
+            fetch('https://opentdb.com/api_token.php?command=request')
+              .then((data) => data.json())
+              .then(({ token }) => localStorage.setItem('token', token));
+          } }
         >
           Jogar
         </button>
