@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import md5 from 'crypto-js/md5';
 import { saveInfoUser } from '../../Redux/actions';
 
 export class Login extends Component {
@@ -25,7 +24,6 @@ export class Login extends Component {
     const gravatarEmail = `https://www.gravatar.com/avatar/${gravatarHash}`;
     userValues(name, gravatarEmail);
 
-    // Busca token da api e salva no localStorage
     fetch('https://opentdb.com/api_token.php?command=request')
       .then((data) => data.json())
       .then(({ token }) => localStorage.setItem('token', token));
@@ -88,7 +86,7 @@ export class Login extends Component {
 }
 const mapDispatchToProps = (dispatch) => ({
   userValues:
-    (user, gravatarEmail) => dispatch(saveInfoUser(user, gravatarEmail)),
+    (user) => dispatch(saveInfoUser(user)),
 });
 
 Login.propTypes = {
