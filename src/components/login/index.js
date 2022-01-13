@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import md5 from 'crypto-js/md5';
 import { saveInfoUser } from '../../Redux/actions';
 
 export class Login extends Component {
@@ -19,10 +18,7 @@ export class Login extends Component {
 
   onClick() {
     const { userValues } = this.props;
-    const { email, name } = this.state;
-    const gravatarHash = md5(email.toString());
-    const gravatarEmail = `https://www.gravatar.com/avatar/${gravatarHash}`;
-    userValues(name, gravatarEmail);
+    userValues(this.state);
   }
 
   testFields() {
@@ -81,7 +77,7 @@ export class Login extends Component {
 }
 const mapDispatchToProps = (dispatch) => ({
   userValues:
-    (user, gravatarEmail) => dispatch(saveInfoUser(user, gravatarEmail)),
+    (user) => dispatch(saveInfoUser(user)),
 });
 
 Login.propTypes = {
