@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import md5 from 'crypto-js/md5';
+import { saveInfoUser } from '../../Redux/actions';
 
 export class Login extends Component {
   constructor() {
@@ -10,6 +14,15 @@ export class Login extends Component {
     };
     this.testFields = this.testFields.bind(this);
     this.handleInput = this.handleInput.bind(this);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick() {
+    const { userValues } = this.props;
+    const { email, name } = this.state;
+    const gravatarHash = md5(email.toString());
+    const gravatarEmail = `https://www.gravatar.com/avatar/${gravatarHash}`;
+    userValues(name, gravatarEmail);
   }
 
   testFields() {
@@ -58,6 +71,7 @@ export class Login extends Component {
           type="submit"
           disabled={ this.testFields() }
           data-testid="btn-play"
+          onClick={ this.onClick }
         >
           Jogar
         </button>
@@ -65,5 +79,12 @@ export class Login extends Component {
     );
   }
 }
+const mapDispatchToProps = (dispatch) => ({
+  userValues:
+    (user, gravatarEmail) => dispatch(saveInfoUser(user, gravatarEmail)),
+});
 
-export default Login;
+Login.propTypes = {
+  userValues: PropTypes.func.isRequired,
+};
+export default connect(null, mapDispatchToProps)(Login);
