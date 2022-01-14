@@ -15,6 +15,8 @@ export class GameScreen extends Component {
       question: 0,
       token: '',
       loading: true,
+      correct: '',
+      incorrect: '',
     };
 
     this.questionSequence = this.questionSequence.bind(this);
@@ -41,8 +43,6 @@ export class GameScreen extends Component {
         results,
         loading: false,
         token: tokenApi,
-        correct: '',
-        incorrect: '',
       });
     }
   }
