@@ -5,6 +5,7 @@ import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
 import Loading from '../../components/Loading';
 import { registerToken } from '../../Redux/actions';
+import './GameScreen.css';
 
 export class GameScreen extends Component {
   constructor() {
@@ -52,6 +53,7 @@ export class GameScreen extends Component {
     ));
     return (
       <div
+        className="answer-options"
         data-testid="answer-options"
       >
         {answers.map((answer, index) => (
@@ -90,21 +92,21 @@ export class GameScreen extends Component {
     const response = results[question];
 
     return (
-      <div>
+      <div className="game-screen">
         <Header />
-        <div>
+        <div className="main">
           <p>
             Pergunta
             {' '}
             {question + 1}
           </p>
-          <div>
+          <div className="main-game">
             {/* {console.log(results)} */}
             {/* {console.log(response)} */}
             {/* {console.log(response.category)} */}
             <h2 data-testid="question-category">{response?.category}</h2>
-            <h3 data-testid="question-text">{response?.question}</h3>
-            <div>
+            <div className="question-an-options">
+              <h3 data-testid="question-text">{response?.question}</h3>
               {response && this.answerRender(response)}
             </div>
             <button

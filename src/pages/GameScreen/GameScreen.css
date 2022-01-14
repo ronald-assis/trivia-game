@@ -1,0 +1,23 @@
+.main .question-an-options {
+  align-items: center;
+  border: 1px solid black;
+  display: flex;
+  justify-content: space-around;
+  height: 200px;
+  margin: 0 auto 10px;
+  width: 90%;
+}
+
+.main .question-an-options h3 {
+  border: 1px solid black;
+}
+
+.main .question-an-options .answer-options {
+  display: flex;
+  flex-flow: column;
+}
+
+.main .question-an-options .answer-options button {
+  margin-top: 10px;
+  font-size: 20px;
+}
