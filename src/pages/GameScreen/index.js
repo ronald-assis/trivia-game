@@ -46,7 +46,10 @@ export class GameScreen extends Component {
 
   answerRender(response) {
     const answers = response.incorrect_answers.concat(response.correct_answer);
-
+    const MINUSONE = -1;
+    answers.sort(() => (
+      Math.floor(Math.random() * (1 - MINUSONE + 1) + MINUSONE)
+    ));
     return (
       <div
         data-testid="answer-options"
