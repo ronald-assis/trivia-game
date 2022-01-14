@@ -17,10 +17,13 @@ export class Login extends Component {
     this.onClick = this.onClick.bind(this);
   }
 
-  onClick() {
+  async onClick() {
     const { userValues } = this.props;
     userValues(this.state);
     // history.push('/configuracao');
+    fetch('https://opentdb.com/api_token.php?command=request')
+      .then((data) => data.json())
+      .then(({ token }) => localStorage.setItem('token', token));
   }
 
   testFields() {

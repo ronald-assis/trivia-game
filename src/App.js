@@ -2,10 +2,9 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
-// import HeaderUsuário from './components/Header';
+import GameScreen from './pages/GameScreen';
 import LoginPage from './pages/Login';
 import SettingsPage from './pages/Settings';
-import GameScreen from './pages/GameScreen';
 import store from './Redux/store';
 
 export default function App() {
