@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { saveInfoUser } from '../../Redux/actions';
+import { registerToken, saveInfoUser } from '../../Redux/actions';
 
 export class Login extends Component {
   constructor() {
@@ -18,12 +18,10 @@ export class Login extends Component {
   }
 
   async onClick() {
-    const { userValues } = this.props;
+    const { userValues, userToken } = this.props;
     userValues(this.state);
     // history.push('/configuracao');
-    fetch('https://opentdb.com/api_token.php?command=request')
-      .then((data) => data.json())
-      .then(({ token }) => localStorage.setItem('token', token));
+    userToken();
   }
 
   testFields() {
