@@ -16,11 +16,14 @@ export class GameScreen extends Component {
       question: 0,
       token: '',
       loading: true,
+      correct: '',
+      incorrect: '',
     };
 
     this.questionSequence = this.questionSequence.bind(this);
     this.answerRender = this.answerRender.bind(this);
     this.getQuestions = this.getQuestions.bind(this);
+    this.borderAnswer = this.borderAnswer.bind(this);
   }
 
   componentDidUpdate() {
@@ -46,6 +49,7 @@ export class GameScreen extends Component {
   }
 
   answerRender(response) {
+    const { correct, incorrect } = this.state;
     const answers = response.incorrect_answers.concat(response.correct_answer);
     const MINUSONE = -1;
     answers.sort(() => (
@@ -63,6 +67,8 @@ export class GameScreen extends Component {
                 key={ index }
                 type="button"
                 data-testid={ `wrong-answer-${index}` }
+                className={ incorrect }
+                onClick={ this.borderAnswer }
               >
                 {answer}
               </button>)
@@ -71,6 +77,8 @@ export class GameScreen extends Component {
                 key="correct"
                 type="button"
                 data-testid="correct-answer"
+                className={ correct }
+                onClick={ this.borderAnswer }
               >
                 {answer}
               </button>
@@ -84,7 +92,16 @@ export class GameScreen extends Component {
     this.setState((state) => ({
       ...state,
       question: state.question + 1,
+      correct: '',
+      incorrect: '',
     }));
+  }
+
+  borderAnswer() {
+    this.setState({
+      correct: 'green-border',
+      incorrect: 'red-border',
+    });
   }
 
   render() {
