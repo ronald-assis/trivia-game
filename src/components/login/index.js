@@ -84,7 +84,7 @@ export class Login extends Component {
 }
 const mapDispatchToProps = (dispatch) => ({
   userValues:
-    (user, gravatarEmail) => dispatch(saveInfoUser(user, gravatarEmail)),
+    (user) => dispatch(saveInfoUser(user)),
   userToken: () => dispatch(registerToken()),
 });
 
