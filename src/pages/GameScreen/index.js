@@ -17,52 +17,37 @@ export class GameScreen extends Component {
       loading: true,
     };
 
-    this.startGame = this.startGame.bind(this);
     this.questionSequence = this.questionSequence.bind(this);
     this.answerRender = this.answerRender.bind(this);
+    this.getQuestions = this.getQuestions.bind(this);
   }
 
-  componentDidMount() {
-    this.startGame();
+  componentDidUpdate() {
+    const { token } = this.props;
+    if (token) this.getQuestions(token);
   }
 
-  // componentDidUpdate() {
-  //   const { token } = this.props;
-  //   this.setState((state) => ({
-  //     ...state,
-  //     token,
-  //   }));
-  // }
-
-  questionSequence() {
-    this.setState((state) => ({
-      ...state,
-      question: state.question + 1,
-    }));
-  }
-
-  async startGame() {
-    // const otherToken = localStorage.getItem('token');
-    const { userToken, token } = this.props;
-    const { results, response_code: reponseCode } = await fetchTriviaApi(token);
-    // console.log(otherToken);
-    // console.log(token);
-    const CODE = 3;
-    if (reponseCode === CODE) {
+  async getQuestions() {
+    const { token: tokenApi, userToken } = this.props;
+    const { token } = this.state;
+    const { results, response_code: responseCode } = await fetchTriviaApi(tokenApi);
+    const INCORRECT_CODE = 3;
+    if (responseCode === INCORRECT_CODE) {
       userToken();
+    } else {
+      if (token === tokenApi) return;
+      this.setState({
+        results,
+        loading: false,
+        token: tokenApi,
+      });
     }
-    return this.setState({
-      results,
-      loading: false,
-    });
   }
 
   answerRender(response) {
-    // const { results, question } = this.state;
-    // const response = results[question];
     const answers = response.incorrect_answers.concat(response.correct_answer);
+
     return (
-      // console.log(answers)
       <div
         data-testid="answer-options"
       >
@@ -90,11 +75,17 @@ export class GameScreen extends Component {
     );
   }
 
+  questionSequence() {
+    this.setState((state) => ({
+      ...state,
+      question: state.question + 1,
+    }));
+  }
+
   render() {
     const { results, question, loading } = this.state;
     const response = results[question];
-    // console.log(results);
-    // console.log(response?.category);
+
     return (
       <div>
         <Header />
