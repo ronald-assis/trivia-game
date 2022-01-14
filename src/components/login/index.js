@@ -82,9 +82,11 @@ export class Login extends Component {
 const mapDispatchToProps = (dispatch) => ({
   userValues:
     (user) => dispatch(saveInfoUser(user)),
+  userToken: () => dispatch(registerToken()),
 });
 
 Login.propTypes = {
   userValues: PropTypes.func.isRequired,
+  userToken: PropTypes.func.isRequired,
 };
 export default connect(null, mapDispatchToProps)(Login);
