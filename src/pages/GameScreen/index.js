@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
+import Loading from '../../components/Loading';
+import { registerToken } from '../../Redux/actions';
 
 export class GameScreen extends Component {
   constructor() {
@@ -9,6 +13,8 @@ export class GameScreen extends Component {
     this.state = {
       results: [],
       question: 0,
+      token: '',
+      loading: true,
     };
 
     this.startGame = this.startGame.bind(this);
@@ -20,6 +26,14 @@ export class GameScreen extends Component {
     this.startGame();
   }
 
+  // componentDidUpdate() {
+  //   const { token } = this.props;
+  //   this.setState((state) => ({
+  //     ...state,
+  //     token,
+  //   }));
+  // }
+
   questionSequence() {
     this.setState((state) => ({
       ...state,
@@ -28,9 +42,19 @@ export class GameScreen extends Component {
   }
 
   async startGame() {
-    const token = localStorage.getItem('token');
-    const { results } = await fetchTriviaApi(token);
-    return this.setState({ results });
+    // const otherToken = localStorage.getItem('token');
+    const { userToken, token } = this.props;
+    const { results, response_code: reponseCode } = await fetchTriviaApi(token);
+    // console.log(otherToken);
+    // console.log(token);
+    const CODE = 3;
+    if (reponseCode === CODE) {
+      userToken();
+    }
+    return this.setState({
+      results,
+      loading: false,
+    });
   }
 
   answerRender(response) {
@@ -67,13 +91,10 @@ export class GameScreen extends Component {
   }
 
   render() {
-    const { results, question } = this.state;
+    const { results, question, loading } = this.state;
     const response = results[question];
     // console.log(results);
     // console.log(response?.category);
-    if (!response) {
-      return <h1>Loading</h1>;
-    }
     return (
       <div>
         <Header />
@@ -81,16 +102,16 @@ export class GameScreen extends Component {
           <p>
             Pergunta
             {' '}
-            {question}
+            {question + 1}
           </p>
           <div>
             {/* {console.log(results)} */}
             {/* {console.log(response)} */}
             {/* {console.log(response.category)} */}
-            <h2 data-testid="question-category">{response.category}</h2>
-            <h3 data-testid="question-text">{response.question}</h3>
+            <h2 data-testid="question-category">{response?.category}</h2>
+            <h3 data-testid="question-text">{response?.question}</h3>
             <div>
-              {this.answerRender(response)}
+              {response && this.answerRender(response)}
             </div>
             <button
               type="button"
@@ -100,9 +121,22 @@ export class GameScreen extends Component {
             </button>
           </div>
         </div>
+        { loading && <Loading />}
       </div>
     );
   }
 }
 
-export default GameScreen;
+GameScreen.propTypes = {
+  userToken: PropTypes.func.isRequired,
+  token: PropTypes.string.isRequired,
+};
+const mapStateToProps = (state) => ({
+  token: state.token,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  userToken: () => dispatch(registerToken()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);
