@@ -1,32 +1,26 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { saveInfoUser } from '../../Redux/actions';
 
 export class Login extends Component {
   constructor() {
     super();
 
-    this.testFields = this.testFields.bind(this);
-    this.handleInput = this.handleInput.bind(this);
-    this.onClick = this.onClick.bind(this);
-
     this.state = {
       email: '',
       name: '',
     };
+    this.testFields = this.testFields.bind(this);
+    this.handleInput = this.handleInput.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   onClick() {
     const { userValues } = this.props;
-    const { email, name } = this.state;
-    const gravatarHash = md5(email.toString());
-    const gravatarEmail = `https://www.gravatar.com/avatar/${gravatarHash}`;
-    userValues(name, gravatarEmail);
-
-    fetch('https://opentdb.com/api_token.php?command=request')
-      .then((data) => data.json())
-      .then(({ token }) => localStorage.setItem('token', token));
+    userValues(this.state);
+    // history.push('/configuracao');
   }
 
   testFields() {
@@ -50,7 +44,6 @@ export class Login extends Component {
 
   render() {
     const { name, email } = this.state;
-
     return (
       <>
         <input
@@ -71,15 +64,16 @@ export class Login extends Component {
           value={ email }
           onChange={ this.handleInput }
         />
-
-        <button
-          type="submit"
-          disabled={ this.testFields() }
-          data-testid="btn-play"
-          onClick={ this.onClick }
-        >
-          Jogar
-        </button>
+        <Link to="./triviagame">
+          <button
+            type="submit"
+            disabled={ this.testFields() }
+            data-testid="btn-play"
+            onClick={ this.onClick }
+          >
+            Jogar
+          </button>
+        </Link>
       </>
     );
   }
@@ -92,5 +86,4 @@ const mapDispatchToProps = (dispatch) => ({
 Login.propTypes = {
   userValues: PropTypes.func.isRequired,
 };
-
 export default connect(null, mapDispatchToProps)(Login);
