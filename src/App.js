@@ -6,6 +6,7 @@ import GameScreen from './pages/GameScreen';
 import LoginPage from './pages/Login';
 import Feedback from './pages/Feedback';
 import SettingsPage from './pages/Settings';
+import Ranking from './pages/Ranking';
 import store from './Redux/store';
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
             <Route exact path="/configuracao" component={ SettingsPage } />
             <Route exact path="/triviagame" component={ GameScreen } />
             <Route exact path="/feedback" component={ Feedback } />
+            <Route exact path="/ranking" component={ Ranking } />
           </Switch>
         </BrowserRouter>
       </Provider>
