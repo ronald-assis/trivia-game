@@ -5,6 +5,7 @@ import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
 import Loading from '../../components/Loading';
 import { registerToken } from '../../Redux/actions';
+import Game from '../../components/Game';
 
 export class GameScreen extends Component {
   constructor() {
@@ -17,81 +18,81 @@ export class GameScreen extends Component {
       loading: true,
       correct: '',
       incorrect: '',
+      unorderedAnswers: [],
+      timesUp: false,
+      counter: 30,
     };
 
     this.questionSequence = this.questionSequence.bind(this);
-    this.answerRender = this.answerRender.bind(this);
     this.getQuestions = this.getQuestions.bind(this);
     this.borderAnswer = this.borderAnswer.bind(this);
+    this.startCounting = this.startCounting.bind(this);
+    this.stopCounting = this.stopCounting.bind(this);
   }
 
   componentDidUpdate() {
     const { token } = this.props;
-    if (token) this.getQuestions(token);
+    if (token) this.getQuestions();
   }
 
   async getQuestions() {
     const { token: tokenApi, userToken } = this.props;
     const { token } = this.state;
+    if (token === tokenApi) return;
     const { results, response_code: responseCode } = await fetchTriviaApi(tokenApi);
     const INCORRECT_CODE = 3;
     if (responseCode === INCORRECT_CODE) {
       userToken();
     } else {
-      if (token === tokenApi) return;
+      const unorderedAnswers = results.map((result) => {
+        const allAnswers = result.incorrect_answers.map((incorrect) => ({
+          answer: incorrect,
+          answerCorrect: false,
+        }));
+        allAnswers.push(({ answer: result.correct_answer, answerCorrect: true }));
+        const HALF_ONE = 0.5;
+        allAnswers.sort(() => HALF_ONE - Math.random());
+        return allAnswers;
+      });
+      this.startCounting();
       this.setState({
         results,
         loading: false,
         token: tokenApi,
+        unorderedAnswers,
       });
     }
   }
 
-  answerRender(response) {
-    const { correct, incorrect } = this.state;
-    const answers = response.incorrect_answers.concat(response.correct_answer);
-    const MINUSONE = -1;
-    answers.sort(() => (
-      Math.floor(Math.random() * (1 - MINUSONE + 1) + MINUSONE)
-    ));
-    return (
-      <div
-        data-testid="answer-options"
-      >
-        {answers.map((answer, index) => (
-          answer !== response.correct_answer
-            ? (
-              <button
-                key={ index }
-                type="button"
-                data-testid={ `wrong-answer-${index}` }
-                className={ incorrect }
-                onClick={ this.borderAnswer }
-              >
-                {answer}
-              </button>)
-            : (
-              <button
-                key="correct"
-                type="button"
-                data-testid="correct-answer"
-                className={ correct }
-                onClick={ this.borderAnswer }
-              >
-                {answer}
-              </button>
-            )
-        ))}
-      </div>
-    );
+  startCounting() {
+    const ONE_SECOND_IN_MS = 1000;
+    this.idInterval = setInterval(() => {
+      const { counter } = this.state;
+      if (counter <= 0) {
+        this.stopCounting();
+        this.setState({
+          timesUp: true,
+        });
+      } else {
+        this.setState({
+          counter: counter - 1,
+        });
+      }
+    }, ONE_SECOND_IN_MS);
+  }
+
+  stopCounting() {
+    clearInterval(this.idInterval);
   }
 
   questionSequence() {
+    this.startCounting();
     this.setState((state) => ({
       ...state,
       question: state.question + 1,
       correct: '',
       incorrect: '',
+      counter: 30,
     }));
   }
 
@@ -103,26 +104,36 @@ export class GameScreen extends Component {
   }
 
   render() {
-    const { results, question, loading } = this.state;
+    const {
+      results,
+      question,
+      loading,
+      unorderedAnswers,
+      timesUp,
+      counter,
+    } = this.state;
     const response = results[question];
 
     return (
       <div>
         <Header />
         <div>
+          <p>{ counter }</p>
           <p>
             Pergunta
             {' '}
             {question + 1}
           </p>
           <div>
-            {/* {console.log(results)} */}
-            {/* {console.log(response)} */}
-            {/* {console.log(response.category)} */}
             <h2 data-testid="question-category">{response?.category}</h2>
             <h3 data-testid="question-text">{response?.question}</h3>
             <div>
-              {response && this.answerRender(response)}
+              { unorderedAnswers.length > 1
+               && <Game
+                 stopCounting={ this.stopCounting }
+                 timesUp={ timesUp }
+                 answers={ unorderedAnswers[question] }
+               /> }
             </div>
             <button
               type="button"
@@ -142,6 +153,7 @@ GameScreen.propTypes = {
   userToken: PropTypes.func.isRequired,
   token: PropTypes.string.isRequired,
 };
+
 const mapStateToProps = (state) => ({
   token: state.token,
 });
