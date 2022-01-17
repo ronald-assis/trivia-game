@@ -34,7 +34,7 @@ const Game = ({ answers, timesUp, stopCounting }) => {
       className="answer-options"
       data-testid="answer-options"
     >
-      {answers?.map(({ answer, answerCorrect }, index) => (
+      {answers && answers.map(({ answer, answerCorrect }, index) => (
         answerCorrect
           ? (
             <button
