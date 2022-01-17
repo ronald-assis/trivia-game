@@ -10,9 +10,10 @@ const Game = ({ answers, timesUp, stopCounting }) => {
     setIncorrectAnswer('');
   };
 
-  const borderAnswer = () => {
+  const borderAnswer = (answer) => {
     setCorrectAnswer('green-border');
     setIncorrectAnswer('red-border');
+    stopCounting(answer);
   };
 
   useEffect(() => {
@@ -22,7 +23,7 @@ const Game = ({ answers, timesUp, stopCounting }) => {
   useEffect(() => {
     if (timesUp) {
       borderAnswer();
-      stopCounting();
+      stopCounting(false);
     } else {
       eraseBorders();
     }
@@ -30,6 +31,7 @@ const Game = ({ answers, timesUp, stopCounting }) => {
 
   return (
     <div
+      className="answer-options"
       data-testid="answer-options"
     >
       {answers.map(({ answer, answerCorrect }, index) => (
@@ -40,7 +42,7 @@ const Game = ({ answers, timesUp, stopCounting }) => {
               type="button"
               data-testid="correct-answer"
               className={ correctAnswer }
-              onClick={ borderAnswer }
+              onClick={ () => borderAnswer(answerCorrect) }
               disabled={ timesUp }
             >
               {answer}
@@ -52,7 +54,7 @@ const Game = ({ answers, timesUp, stopCounting }) => {
               type="button"
               data-testid={ `wrong-answer-${index}` }
               className={ incorrectAnswer }
-              onClick={ borderAnswer }
+              onClick={ () => borderAnswer(answerCorrect) }
               disabled={ timesUp }
             >
               {answer}
@@ -65,7 +67,7 @@ const Game = ({ answers, timesUp, stopCounting }) => {
 Game.propTypes = {
   timesUp: PropTypes.bool.isRequired,
   stopCounting: PropTypes.func.isRequired,
-  answers: PropTypes.objectOf(PropTypes.object).isRequired,
+  answers: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Game;

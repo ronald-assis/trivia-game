@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
 import Loading from '../../components/Loading';
-import { registerToken } from '../../Redux/actions';
+import { registerToken, saveScore } from '../../Redux/actions';
+// import Timer from '../../components/Timer';
+import './GameScreen.css';
 import Game from '../../components/Game';
 
 export class GameScreen extends Component {
@@ -64,6 +66,53 @@ export class GameScreen extends Component {
     }
   }
 
+  setNewScoreInLocalStorage = (points) => {
+    const objString = localStorage.getItem('state');
+    const { player } = JSON.parse(objString) || {};
+    const playerScore = { player: {
+      name: player.name,
+      score: player.score + points,
+      picture: player.picture,
+    } };
+    localStorage.setItem('state', JSON.stringify(playerScore));
+  };
+
+  convertDifficultyToPoint = (difficult) => {
+    const EASY = 1;
+    const MEDIUM = 2;
+    const HARD = 3;
+    switch (difficult) {
+    case 'easy':
+      return EASY;
+    case 'medium':
+      return MEDIUM;
+    case 'hard':
+      return HARD;
+    default:
+      return 0;
+    }
+  };
+
+  setStore = (answer = false) => {
+    const { counter, results, question } = this.state;
+    const { saveScoreDispatch } = this.props;
+    const { difficulty } = results[question];
+    const store = 10;
+    let points = 0;
+    const difficult = this.convertDifficultyToPoint(difficulty);
+    if (answer) {
+      points = store + (counter * difficult);
+    }
+    this.setNewScoreInLocalStorage(points);
+    saveScoreDispatch(points);
+    return points;
+  };
+
+  stopCounting(payload) {
+    this.setStore(payload);
+    clearInterval(this.idInterval);
+  }
+
   startCounting() {
     const ONE_SECOND_IN_MS = 1000;
     this.idInterval = setInterval(() => {
@@ -81,10 +130,6 @@ export class GameScreen extends Component {
     }, ONE_SECOND_IN_MS);
   }
 
-  stopCounting() {
-    clearInterval(this.idInterval);
-  }
-
   questionSequence() {
     this.startCounting();
     this.setState((state) => ({
@@ -96,7 +141,8 @@ export class GameScreen extends Component {
     }));
   }
 
-  borderAnswer() {
+  borderAnswer(response, answer) {
+    this.setStore(response, answer);
     this.setState({
       correct: 'green-border',
       incorrect: 'red-border',
@@ -115,19 +161,20 @@ export class GameScreen extends Component {
     const response = results[question];
 
     return (
-      <div>
+      <div className="game-screen">
         <Header />
-        <div>
+        {/* <Timer /> */}
+        <div className="main">
           <p>{ counter }</p>
           <p>
             Pergunta
             {' '}
             {question + 1}
           </p>
-          <div>
+          <div className="main-game">
             <h2 data-testid="question-category">{response?.category}</h2>
-            <h3 data-testid="question-text">{response?.question}</h3>
-            <div>
+            <div className="question-and-options">
+              <h3 data-testid="question-text">{response?.question}</h3>
               { unorderedAnswers.length > 1
                && <Game
                  stopCounting={ this.stopCounting }
@@ -152,14 +199,17 @@ export class GameScreen extends Component {
 GameScreen.propTypes = {
   userToken: PropTypes.func.isRequired,
   token: PropTypes.string.isRequired,
+  saveScoreDispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   token: state.token,
+  local: state.saveLocalStorage,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   userToken: () => dispatch(registerToken()),
+  saveScoreDispatch: (score) => dispatch(saveScore(score)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);
