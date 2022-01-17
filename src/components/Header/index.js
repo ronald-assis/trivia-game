@@ -2,17 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
-import { saveLocalStorage } from '../../Redux/actions';
 import './Header.css';
 
 export class Header extends Component {
-  // constructor() {
-  //   super();
-  //   this.state = {
-  //     score: 0,
-  //   };
-  // }
-
   savePlayerScoreInLocalStorage(name, gravatarEmail) {
     const player = { player: {
       name,
@@ -23,15 +15,11 @@ export class Header extends Component {
   }
 
   render() {
-    // const { score } = this.state;
-    const { nameUserState, emailUserState, saveScore } = this.props;
+    const { nameUserState, emailUserState, score } = this.props;
     const gravatarHash = md5(emailUserState).toString();
     const gravatarEmail = `https://www.gravatar.com/avatar/${gravatarHash}`;
     this.savePlayerScoreInLocalStorage(nameUserState, gravatarEmail);
-    const { player } = JSON.parse(localStorage.getItem('state'));
-    const { score } = player;
-    console.log(player);
-    saveScore(player);
+    console.log(score);
 
     return (
       <div className="header">
@@ -61,17 +49,13 @@ export class Header extends Component {
 Header.propTypes = {
   nameUserState: PropTypes.string.isRequired,
   emailUserState: PropTypes.string.isRequired,
-  saveScore: PropTypes.func.isRequired,
+  score: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   nameUserState: state.nameUser.name,
   emailUserState: state.user.email,
-  score: state.saveLocalStorage.score,
+  score: state.player.score,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  saveScore: (state) => dispatch(saveLocalStorage(state)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps)(Header);

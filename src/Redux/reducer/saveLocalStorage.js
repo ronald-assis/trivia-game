@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE } from '../actions';
+import { LOCAL_STORAGE, SAVE_SCORE } from '../actions';
 
 const INITIAL_STATE = {
   name: '',
@@ -13,7 +13,12 @@ const saveLocalStorage = (state = INITIAL_STATE, action) => {
       ...state,
       name: action.ranking.name,
       picture: action.ranking.picture,
-      score: action.ranking.score,
+    };
+  }
+  case SAVE_SCORE: {
+    return {
+      ...state,
+      score: state.score + action.score,
     };
   }
   default:

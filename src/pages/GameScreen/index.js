@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
 import Loading from '../../components/Loading';
-import { registerToken, saveLocalStorage } from '../../Redux/actions';
+import { registerToken, saveScore } from '../../Redux/actions';
 // import Timer from '../../components/Timer';
 import './GameScreen.css';
+import Game from '../../components/Game';
 
 export class GameScreen extends Component {
   constructor() {
@@ -19,33 +20,48 @@ export class GameScreen extends Component {
       loading: true,
       correct: '',
       incorrect: '',
+      unorderedAnswers: [],
+      timesUp: false,
+      counter: 30,
     };
 
     this.questionSequence = this.questionSequence.bind(this);
-    this.answerRender = this.answerRender.bind(this);
     this.getQuestions = this.getQuestions.bind(this);
     this.borderAnswer = this.borderAnswer.bind(this);
+    this.startCounting = this.startCounting.bind(this);
+    this.stopCounting = this.stopCounting.bind(this);
   }
 
   componentDidUpdate() {
     const { token } = this.props;
-    if (token) this.getQuestions(token);
+    if (token) this.getQuestions();
   }
 
   async getQuestions() {
     const { token: tokenApi, userToken } = this.props;
     const { token } = this.state;
+    if (token === tokenApi) return;
     const { results, response_code: responseCode } = await fetchTriviaApi(tokenApi);
     const INCORRECT_CODE = 3;
     if (responseCode === INCORRECT_CODE) {
       userToken();
     } else {
-      if (token === tokenApi) return;
+      const unorderedAnswers = results.map((result) => {
+        const allAnswers = result.incorrect_answers.map((incorrect) => ({
+          answer: incorrect,
+          answerCorrect: false,
+        }));
+        allAnswers.push(({ answer: result.correct_answer, answerCorrect: true }));
+        const HALF_ONE = 0.5;
+        allAnswers.sort(() => HALF_ONE - Math.random());
+        return allAnswers;
+      });
+      this.startCounting();
       this.setState({
         results,
         loading: false,
         token: tokenApi,
-        disabled: false,
+        unorderedAnswers,
       });
     }
   }
@@ -59,7 +75,7 @@ export class GameScreen extends Component {
       picture: player.picture,
     } };
     localStorage.setItem('state', JSON.stringify(playerScore));
-  }
+  };
 
   convertDifficultyToPoint = (difficult) => {
     const EASY = 1;
@@ -75,75 +91,53 @@ export class GameScreen extends Component {
     default:
       return 0;
     }
-  }
+  };
 
-  setStore = ({ correct_answer: correctAnswer, difficulty }, answer) => {
-    const { timer } = this.props;
+  setStore = (answer = false) => {
+    const { counter, results, question } = this.state;
+    const { saveScoreDispatch } = this.props;
+    const { difficulty } = results[question];
     const store = 10;
     let points = 0;
     const difficult = this.convertDifficultyToPoint(difficulty);
-    if ((correctAnswer === answer) && answer) {
-      points = store + (timer * difficult);
+    if (answer) {
+      points = store + (counter * difficult);
     }
     this.setNewScoreInLocalStorage(points);
+    saveScoreDispatch(points);
     return points;
+  };
+
+  stopCounting(payload) {
+    this.setStore(payload);
+    clearInterval(this.idInterval);
   }
 
-  answerRender(response) {
-    const {
-      state: { correct, incorrect, disabled },
-    } = this;
-    const answers = response.incorrect_answers.concat(response.correct_answer);
-    const MINUSONE = -1;
-    answers.sort(() => (
-      Math.floor(Math.random() * (1 - MINUSONE + 1) + MINUSONE)
-    ));
-
-    return (
-      <div
-        className="answer-options"
-        data-testid="answer-options"
-      >
-        {answers.map((answer, index) => (
-          answer !== response.correct_answer
-            ? (
-              <button
-                key={ index }
-                type="button"
-                data-testid={ `wrong-answer-${index}` }
-                className={ incorrect }
-                disabled={ disabled }
-                onClick={ () => (
-                  this.borderAnswer(response, answer)
-                ) }
-              >
-                {answer}
-              </button>)
-            : (
-              <button
-                key="correct"
-                type="button"
-                data-testid="correct-answer"
-                className={ correct }
-                disabled={ disabled }
-                onClick={ () => (
-                  this.borderAnswer(response, answer)
-                ) }
-              >
-                {answer}
-              </button>
-            )
-        ))}
-      </div>
-    );
+  startCounting() {
+    const ONE_SECOND_IN_MS = 1000;
+    this.idInterval = setInterval(() => {
+      const { counter } = this.state;
+      if (counter <= 0) {
+        this.stopCounting();
+        this.setState({
+          timesUp: true,
+        });
+      } else {
+        this.setState({
+          counter: counter - 1,
+        });
+      }
+    }, ONE_SECOND_IN_MS);
   }
 
   questionSequence() {
+    this.startCounting();
     this.setState((state) => ({
       ...state,
       question: state.question + 1,
       correct: '',
       incorrect: '',
+      counter: 30,
     }));
   }
 
@@ -156,8 +150,14 @@ export class GameScreen extends Component {
   }
 
   render() {
-    const { results, question, loading } = this.state;
-
+    const {
+      results,
+      question,
+      loading,
+      unorderedAnswers,
+      timesUp,
+      counter,
+    } = this.state;
     const response = results[question];
 
     return (
@@ -165,19 +165,22 @@ export class GameScreen extends Component {
         <Header />
         {/* <Timer /> */}
         <div className="main">
+          <p>{ counter }</p>
           <p>
             Pergunta
             {' '}
             {question + 1}
           </p>
           <div className="main-game">
-            {/* {console.log(results)} */}
-            {/* {console.log(response)} */}
-            {/* {console.log(response.category)} */}
             <h2 data-testid="question-category">{response?.category}</h2>
-            <div className="question-an-options">
+            <div className="question-and-options">
               <h3 data-testid="question-text">{response?.question}</h3>
-              {response && this.answerRender(response)}
+              { unorderedAnswers.length > 1
+               && <Game
+                 stopCounting={ this.stopCounting }
+                 timesUp={ timesUp }
+                 answers={ unorderedAnswers[question] }
+               /> }
             </div>
             <button
               type="button"
@@ -196,17 +199,17 @@ export class GameScreen extends Component {
 GameScreen.propTypes = {
   userToken: PropTypes.func.isRequired,
   token: PropTypes.string.isRequired,
-  timer: PropTypes.number.isRequired,
+  saveScoreDispatch: PropTypes.func.isRequired,
 };
+
 const mapStateToProps = (state) => ({
   token: state.token,
-  timer: state.saveTime.timer,
   local: state.saveLocalStorage,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   userToken: () => dispatch(registerToken()),
-  saveScore: (score) => dispatch(saveLocalStorage(score)),
+  saveScoreDispatch: (score) => dispatch(saveScore(score)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);
