@@ -23,6 +23,7 @@ export class GameScreen extends Component {
       unorderedAnswers: [],
       timesUp: false,
       counter: 30,
+      answered: false,
     };
 
     this.questionSequence = this.questionSequence.bind(this);
@@ -30,6 +31,7 @@ export class GameScreen extends Component {
     this.borderAnswer = this.borderAnswer.bind(this);
     this.startCounting = this.startCounting.bind(this);
     this.stopCounting = this.stopCounting.bind(this);
+    // this.renderButtonNext = this.renderButtonNext.bind(this);
   }
 
   componentDidUpdate() {
@@ -103,6 +105,9 @@ export class GameScreen extends Component {
     if (answer) {
       points = store + (counter * difficult);
     }
+    this.setState({
+      answered: true,
+    });
     this.setNewScoreInLocalStorage(points);
     saveScoreDispatch(points);
     return points;
@@ -138,6 +143,7 @@ export class GameScreen extends Component {
       correct: '',
       incorrect: '',
       counter: 30,
+      answered: false,
     }));
   }
 
@@ -157,6 +163,7 @@ export class GameScreen extends Component {
       unorderedAnswers,
       timesUp,
       counter,
+      answered,
     } = this.state;
     const response = results[question];
 
@@ -182,12 +189,14 @@ export class GameScreen extends Component {
                  answers={ unorderedAnswers[question] }
                /> }
             </div>
-            <button
-              type="button"
-              onClick={ () => this.questionSequence() }
-            >
-              Próximo
-            </button>
+            { answered && (
+              <button
+                type="button"
+                onClick={ () => this.questionSequence() }
+                data-testid="btn-next"
+              >
+                Próximo
+              </button>)}
           </div>
         </div>
         { loading && <Loading />}
