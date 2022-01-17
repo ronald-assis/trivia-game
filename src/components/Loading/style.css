@@ -20,6 +20,7 @@
   background-color: #42c38d;
   height: 15%;
   margin: 20px;
+  transform: scale(0.5);
   width: 2.5%;
 }
 
