@@ -1,0 +1,36 @@
+.main {
+  display: flex;
+  flex-flow: column;
+  text-align: center;
+}
+
+.main .question-and-options {
+  align-items: center;
+  border: 1px solid black;
+  display: flex;
+  height: 200px;
+  justify-content: space-around;
+  margin: 0 auto 10px;
+  width: 90%;
+}
+
+.main .question-and-options h3 {
+  align-items: center;
+  border: 1px solid black;
+  display: flex;
+  height: 100px;
+  justify-content: center;
+  width: 51%;
+}
+
+.main .question-and-options .answer-options {
+  display: flex;
+  flex-flow: column;
+}
+
+.main .question-and-options .answer-options button {
+  font-size: 20px;
+  height: 35px;
+  margin-top: 10px;
+  width: 300px;
+}
