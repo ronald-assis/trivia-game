@@ -16,7 +16,9 @@ class Ranking extends Component {
         </Link>
         <ol>
           {
-            allPersonsOnRanking.sort(({ score: score1 }, { score: score2 }) => score2 - score1)
+            allPersonsOnRanking.sort(
+              ({ score: score1 }, { score: score2 }) => (score2 - score1),
+            )
               .map((person, index) => (
                 <>
                   <img src={ person.picture } alt="player" />
