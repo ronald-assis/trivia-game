@@ -1,0 +1,14 @@
+.feedback-text {
+  align-items: center;
+  border: 1px solid black;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  width: 400px;
+}
+
+.feedback .feedback-text .feedback-ranking {
+  display: flex;
+  flex-flow: column;
+  text-align: center;
+}
