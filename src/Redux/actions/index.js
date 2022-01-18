@@ -15,9 +15,9 @@ export const saveTime = (time) => ({
   time,
 });
 
-export const saveLocalStorage = (ranking) => ({
+export const saveLocalStorage = (user) => ({
   type: LOCAL_STORAGE,
-  ranking,
+  user,
 });
 
 export const saveScore = (score) => ({
