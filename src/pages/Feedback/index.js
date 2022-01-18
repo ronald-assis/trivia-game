@@ -9,24 +9,30 @@ export class Feedback extends Component {
     return (
       <div className="feedback">
         <Header />
-        <div>
-          <Link to="/">
-            <button
-              type="button"
-              data-testid="btn-play-again"
-            >
-              Play Again
-            </button>
-          </Link>
-          <Link to="/ranking">
-            <button
-              type="button"
-              data-testid="btn-ranking"
-            >
-              ranking
-            </button>
-          </Link>
-        </div>
+        <main>
+          <h1>
+            Feedback
+          </h1>
+          <FeedBackPoints />
+          <div>
+            <Link to="/">
+              <button
+                type="button"
+                data-testid="btn-play-again"
+              >
+                Play Again
+              </button>
+            </Link>
+            <Link to="/ranking">
+              <button
+                type="button"
+                data-testid="btn-ranking"
+              >
+                ranking
+              </button>
+            </Link>
+          </div>
+        </main>
       </div>
     );
   }
