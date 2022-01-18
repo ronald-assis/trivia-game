@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
 import Loading from '../../components/Loading';
-import { registerToken, saveScore } from '../../Redux/actions';
+import { registerToken, saveScore, saveHit } from '../../Redux/actions';
 import './GameScreen.css';
 import Game from '../../components/Game';
 
@@ -66,15 +66,11 @@ export class GameScreen extends Component {
     }
   }
 
-  setNewScoreInLocalStorage = (points) => {
-    const objString = localStorage.getItem('state');
-    const { player } = JSON.parse(objString) || {};
-    const playerScore = { player: {
-      name: player.name,
-      score: player.score + points,
-      picture: player.picture,
-    } };
-    localStorage.setItem('state', JSON.stringify(playerScore));
+  totalHits = (points) => {
+    const { saveHitDispatch } = this.props;
+    let assert = 0;
+    if (points > 0) assert = 1;
+    saveHitDispatch(assert);
   };
 
   convertDifficultyToPoint = (difficult) => {
@@ -106,7 +102,7 @@ export class GameScreen extends Component {
     this.setState({
       answered: true,
     });
-    this.setNewScoreInLocalStorage(points);
+    this.totalHits(points);
     saveScoreDispatch(points);
     return points;
   };
@@ -202,6 +198,7 @@ GameScreen.propTypes = {
   userToken: PropTypes.func.isRequired,
   token: PropTypes.string.isRequired,
   saveScoreDispatch: PropTypes.func.isRequired,
+  saveHitDispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -212,6 +209,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   userToken: () => dispatch(registerToken()),
   saveScoreDispatch: (score) => dispatch(saveScore(score)),
+  saveHitDispatch: (assert) => dispatch(saveHit(assert)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);

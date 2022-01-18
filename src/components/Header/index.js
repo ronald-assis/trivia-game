@@ -6,9 +6,11 @@ import './Header.css';
 
 export class Header extends Component {
   savePlayerScoreInLocalStorage(name, gravatarEmail) {
+    const { score, assertions } = this.props;
     const player = { player: {
       name,
-      score: 0,
+      score,
+      assertions,
       picture: gravatarEmail,
     } };
     localStorage.setItem('state', JSON.stringify(player));
@@ -19,7 +21,6 @@ export class Header extends Component {
     const gravatarHash = md5(emailUserState).toString();
     const gravatarEmail = `https://www.gravatar.com/avatar/${gravatarHash}`;
     this.savePlayerScoreInLocalStorage(nameUserState, gravatarEmail);
-    console.log(score);
 
     return (
       <div className="header">
@@ -50,12 +51,14 @@ Header.propTypes = {
   nameUserState: PropTypes.string.isRequired,
   emailUserState: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
+  assertions: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   nameUserState: state.nameUser.name,
   emailUserState: state.user.email,
   score: state.player.score,
+  assertions: state.player.assertions,
 });
 
 export default connect(mapStateToProps)(Header);

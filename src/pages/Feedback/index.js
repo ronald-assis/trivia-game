@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/Header';
+import FeedBackPoints from '../../components/FeedBackPoints';
+import './feedback.css';
 
 export class Feedback extends Component {
   render() {
     return (
-      <div>
-        <h1
-          data-testid="feedback-text"
-        >
-          Feedback
-
-        </h1>
+      <div className="feedback">
         <Header />
         <div>
           <Link to="/">
