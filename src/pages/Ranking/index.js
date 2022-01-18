@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 class Ranking extends Component {
   render() {
+    const allPersonsOnRanking = JSON.parse(localStorage.getItem('ranking'));
     return (
       <div>
         <Link to="/">
@@ -11,9 +12,22 @@ class Ranking extends Component {
             data-testid="btn-go-home"
           >
             Voltar a tela de inicio
-
           </button>
         </Link>
+        <ol>
+          {
+            allPersonsOnRanking.sort(
+              ({ score: score1 }, { score: score2 }) => (score2 - score1),
+            )
+              .map((person, index) => (
+                <>
+                  <img src={ person.picture } alt="player" />
+                  <p data-testid={ `player-name-${index}` }>{person.name}</p>
+                  <p data-testid={ `player-score-${index}` }>{person.score}</p>
+                </>
+              ))
+          }
+        </ol>
       </div>
     );
   }
