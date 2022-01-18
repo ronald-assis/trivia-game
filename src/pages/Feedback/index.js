@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../../components/Header';
 
 export class Feedback extends Component {
@@ -12,6 +13,16 @@ export class Feedback extends Component {
 
         </h1>
         <Header />
+        <div>
+          <Link to="/">
+            <button
+              type="button"
+              data-testid="btn-play-again"
+            >
+              Play Again
+            </button>
+          </Link>
+        </div>
       </div>
     );
   }
