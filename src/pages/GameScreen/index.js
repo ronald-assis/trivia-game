@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
 import Loading from '../../components/Loading';
 import { registerToken, saveScore } from '../../Redux/actions';
-// import Timer from '../../components/Timer';
 import './GameScreen.css';
 import Game from '../../components/Game';
 
@@ -17,18 +17,16 @@ export class GameScreen extends Component {
       results: [],
       question: 0,
       token: '',
-      loading: true,
-      correct: '',
-      incorrect: '',
+      loading: false,
       unorderedAnswers: [],
       timesUp: false,
       counter: 30,
+      redirect: false,
       answered: false,
     };
 
     this.questionSequence = this.questionSequence.bind(this);
     this.getQuestions = this.getQuestions.bind(this);
-    this.borderAnswer = this.borderAnswer.bind(this);
     this.startCounting = this.startCounting.bind(this);
     this.stopCounting = this.stopCounting.bind(this);
     // this.renderButtonNext = this.renderButtonNext.bind(this);
@@ -140,19 +138,14 @@ export class GameScreen extends Component {
     this.setState((state) => ({
       ...state,
       question: state.question + 1,
-      correct: '',
-      incorrect: '',
       counter: 30,
       answered: false,
     }));
-  }
-
-  borderAnswer(response, answer) {
-    this.setStore(response, answer);
-    this.setState({
-      correct: 'green-border',
-      incorrect: 'red-border',
-    });
+    const { question } = this.state;
+    const maxQuestions = 4;
+    if (question === maxQuestions) {
+      this.setState({ redirect: true });
+    }
   }
 
   render() {
@@ -163,19 +156,19 @@ export class GameScreen extends Component {
       unorderedAnswers,
       timesUp,
       counter,
+      redirect,
       answered,
     } = this.state;
     const response = results[question];
 
     return (
       <div className="game-screen">
+        {redirect && <Redirect to="/feedBack" /> }
         <Header />
-        {/* <Timer /> */}
         <div className="main">
           <p>{ counter }</p>
           <p>
-            Pergunta
-            {' '}
+            Pergunta:
             {question + 1}
           </p>
           <div className="main-game">
@@ -199,7 +192,7 @@ export class GameScreen extends Component {
               </button>)}
           </div>
         </div>
-        { loading && <Loading />}
+        {loading && <Loading />}
       </div>
     );
   }
