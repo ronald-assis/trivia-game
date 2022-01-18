@@ -20,11 +20,11 @@ class Ranking extends Component {
               ({ score: score1 }, { score: score2 }) => (score2 - score1),
             )
               .map((person, index) => (
-                <>
+                <div key={ index }>
                   <img src={ person.picture } alt="player" />
                   <p data-testid={ `player-name-${index}` }>{person.name}</p>
                   <p data-testid={ `player-score-${index}` }>{person.score}</p>
-                </>
+                </div>
               ))
           }
         </ol>
