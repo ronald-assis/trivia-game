@@ -12,8 +12,8 @@ const saveLocalStorage = (state = INITIAL_STATE, action) => {
   case LOCAL_STORAGE: {
     return {
       ...state,
-      name: action.ranking.name,
-      picture: action.ranking.picture,
+      name: action.user.name,
+      picture: action.user.picture,
     };
   }
   case SAVE_SCORE: {

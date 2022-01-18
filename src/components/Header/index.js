@@ -3,30 +3,44 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
 import './Header.css';
+import { saveLocalStorage } from '../../Redux/actions';
 
 export class Header extends Component {
-  savePlayerScoreInLocalStorage(name, gravatarEmail) {
-    const { score, assertions } = this.props;
-    const player = { player: {
-      name,
-      score,
-      assertions,
-      picture: gravatarEmail,
-    } };
-    localStorage.setItem('state', JSON.stringify(player));
+  constructor(props) {
+    super(props);
+
+    this.saveInfosOnState = this.saveInfosOnState.bind(this);
+
+    this.state = {
+      pictureSrc: '',
+      name: '',
+    };
+  }
+
+  componentDidMount() {
+    this.saveInfosOnState();
+  }
+
+  saveInfosOnState() {
+    const { nameUserState, emailUserState, saveNameAndPicture } = this.props;
+    const gravatarHash = md5(emailUserState).toString();
+    const gravatarSrc = `https://www.gravatar.com/avatar/${gravatarHash}`;
+    saveNameAndPicture({ name: nameUserState, picture: gravatarSrc });
+    this.setState({
+      pictureSrc: gravatarSrc,
+      name: nameUserState,
+    });
   }
 
   render() {
-    const { nameUserState, emailUserState, score } = this.props;
-    const gravatarHash = md5(emailUserState).toString();
-    const gravatarEmail = `https://www.gravatar.com/avatar/${gravatarHash}`;
-    this.savePlayerScoreInLocalStorage(nameUserState, gravatarEmail);
+    const { pictureSrc, name } = this.state;
+    const { score } = this.props;
 
     return (
       <div className="header">
         <div className="logo-and-user">
           <img
-            src={ gravatarEmail }
+            src={ pictureSrc }
             alt="userImage"
             data-testid="header-profile-picture"
           />
@@ -34,7 +48,7 @@ export class Header extends Component {
           <h1
             data-testid="header-player-name"
           >
-            { nameUserState }
+            { name }
           </h1>
         </div>
         <h1
@@ -51,8 +65,12 @@ Header.propTypes = {
   nameUserState: PropTypes.string.isRequired,
   emailUserState: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
-  assertions: PropTypes.number.isRequired,
+  saveNameAndPicture: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = (distpatch) => ({
+  saveNameAndPicture: (user) => distpatch(saveLocalStorage(user)),
+});
 
 const mapStateToProps = (state) => ({
   nameUserState: state.nameUser.name,
@@ -61,4 +79,4 @@ const mapStateToProps = (state) => ({
   assertions: state.player.assertions,
 });
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
