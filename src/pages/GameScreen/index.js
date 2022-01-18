@@ -17,7 +17,7 @@ export class GameScreen extends Component {
       results: [],
       question: 0,
       token: '',
-      loading: false,
+      loading: true,
       unorderedAnswers: [],
       timesUp: false,
       counter: 30,
@@ -30,6 +30,11 @@ export class GameScreen extends Component {
     this.startCounting = this.startCounting.bind(this);
     this.stopCounting = this.stopCounting.bind(this);
     // this.renderButtonNext = this.renderButtonNext.bind(this);
+  }
+
+  componentDidMount() {
+    const { token } = this.props;
+    if (token) this.getQuestions();
   }
 
   componentDidUpdate() {
@@ -130,6 +135,7 @@ export class GameScreen extends Component {
   }
 
   questionSequence() {
+    const { history } = this.props;
     this.startCounting();
     this.setState((state) => ({
       ...state,
@@ -140,7 +146,7 @@ export class GameScreen extends Component {
     const { question } = this.state;
     const maxQuestions = 4;
     if (question === maxQuestions) {
-      this.setState({ redirect: true });
+      history.push('/feedBack');
     }
   }
 
@@ -159,6 +165,7 @@ export class GameScreen extends Component {
 
     return (
       <div className="game-screen">
+        {loading && <Loading />}
         {redirect && <Redirect to="/feedBack" /> }
         <Header />
         <div className="main">
@@ -188,7 +195,6 @@ export class GameScreen extends Component {
               </button>)}
           </div>
         </div>
-        {loading && <Loading />}
       </div>
     );
   }
@@ -199,6 +205,9 @@ GameScreen.propTypes = {
   token: PropTypes.string.isRequired,
   saveScoreDispatch: PropTypes.func.isRequired,
   saveHitDispatch: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
 };
 
 const mapStateToProps = (state) => ({

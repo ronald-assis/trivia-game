@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE, SAVE_SCORE, SAVE_HIT } from '../actions';
+import { LOCAL_STORAGE, SAVE_SCORE, SAVE_HIT, ERASE_DATA } from '../actions';
 
 const INITIAL_STATE = {
   name: '',
@@ -22,6 +22,13 @@ const saveLocalStorage = (state = INITIAL_STATE, action) => {
       score: state.score + action.score,
     };
   }
+
+  case ERASE_DATA: {
+    return {
+      ...INITIAL_STATE,
+    };
+  }
+
   case SAVE_HIT: {
     return {
       ...state,

@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Header from '../../components/Header';
 import FeedBackPoints from '../../components/FeedBackPoints';
 import './feedback.css';
+import { eraseData } from '../../Redux/actions';
 
 export class Feedback extends Component {
   componentDidMount() {
@@ -17,6 +18,11 @@ export class Feedback extends Component {
     } else {
       localStorage.setItem('ranking', JSON.stringify([currPlayer]));
     }
+  }
+
+  componentWillUnmount() {
+    const { eraseDataOnState } = this.props;
+    eraseDataOnState();
   }
 
   render() {
@@ -52,6 +58,10 @@ export class Feedback extends Component {
   }
 }
 
+const mapDispatchToProps = (dispatch) => ({
+  eraseDataOnState: () => dispatch(eraseData()),
+});
+
 const mapStateToProps = (state) => ({
   name: state.player.name,
   picture: state.player.picture,
@@ -62,6 +72,7 @@ Feedback.propTypes = {
   name: PropTypes.string.isRequired,
   picture: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
+  eraseDataOnState: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(Feedback);
+export default connect(mapStateToProps, mapDispatchToProps)(Feedback);
