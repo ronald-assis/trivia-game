@@ -22,6 +22,14 @@ export class Feedback extends Component {
               Play Again
             </button>
           </Link>
+          <Link to="/ranking">
+            <button
+              type="button"
+              data-testid="btn-ranking"
+            >
+              ranking
+            </button>
+          </Link>
         </div>
       </div>
     );

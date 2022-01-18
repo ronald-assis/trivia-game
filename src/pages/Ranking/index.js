@@ -5,7 +5,7 @@ class Ranking extends Component {
   render() {
     const allPersonsOnRanking = JSON.parse(localStorage.getItem('ranking'));
     return (
-      <div>
+      <div data-testid="ranking-title">
         <Link to="/">
           <button
             type="button"
