@@ -2,7 +2,7 @@ body, .App {
   height: 100vh;
 }
 
-.App {
+.container-home {
   background-image: url('https://i.imgur.com/SnRE8VA.png');
   background-repeat: no-repeat;
   background-size: cover;

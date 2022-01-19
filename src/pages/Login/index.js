@@ -48,7 +48,7 @@ export class LoginPage extends Component {
     const { history } = this.props;
     const { rainbowColorsInHex } = this.state;
     return (
-      <Container maxW="full" height="full">
+      <Container className="container-home" maxW="full" height="full">
         <Flex flexDir="column" justifyContent="space-around" height="full">
           <Box height="">
             <Heading position="relative" className="curved-text">
