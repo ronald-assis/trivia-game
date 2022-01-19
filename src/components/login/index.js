@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Box, Input, Text, Button, Flex } from '@chakra-ui/react';
+import { FaPlay } from 'react-icons/fa';
+import { MdBuild } from 'react-icons/md';
 import { registerToken, saveInfoUser } from '../../Redux/actions';
 
 export class Login extends Component {
@@ -18,10 +20,10 @@ export class Login extends Component {
   }
 
   async onClick() {
-    const { userValues, userToken } = this.props;
+    const { userValues, userToken, history } = this.props;
     userValues(this.state);
-    // history.push('/configuracao');
     userToken();
+    history.push('/triviagame');
   }
 
   testFields() {
@@ -29,8 +31,8 @@ export class Login extends Component {
 
     if (
       email.includes('@')
-            && email.includes('.com')
-            && name.length > 1
+        && email.includes('.com')
+        && name.length > 1
     ) return false;
     return true;
   }
@@ -45,37 +47,60 @@ export class Login extends Component {
 
   render() {
     const { name, email } = this.state;
+    const { history } = this.props;
+
     return (
-      <>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          data-testid="input-player-name"
-          value={ name }
-          onChange={ this.handleInput }
-
-        />
-
-        <input
-          type="email"
-          name="email"
-          id="email"
-          data-testid="input-gravatar-email"
-          value={ email }
-          onChange={ this.handleInput }
-        />
-        <Link to="./triviagame">
-          <button
+      <Box>
+        <Box margin="2">
+          <Text color="yellow">Nome:</Text>
+          <Input
+            type="text"
+            name="name"
+            id="name"
+            data-testid="input-player-name"
+            value={ name }
+            onChange={ this.handleInput }
+            backgroundColor="white"
+            borderColor="yellow"
+          />
+        </Box>
+        <Box margin="2">
+          <Text color="yellow">Email:</Text>
+          <Input
+            type="email"
+            name="email"
+            id="email"
+            data-testid="input-gravatar-email"
+            value={ email }
+            onChange={ this.handleInput }
+            backgroundColor="white"
+            borderColor="yellow"
+          />
+        </Box>
+        <Flex flexDir="column" marginTop="4">
+          <Button
             type="submit"
             disabled={ this.testFields() }
             data-testid="btn-play"
             onClick={ this.onClick }
+            rightIcon={ <FaPlay /> }
+            colorScheme="blue"
+            margin="2"
           >
             Jogar
-          </button>
-        </Link>
-      </>
+          </Button>
+          <Button
+            data-testid="btn-settings"
+            type="button"
+            onClick={ () => history.push('/configuracao') }
+            rightIcon={ <MdBuild /> }
+            colorScheme="pink"
+            margin="2"
+          >
+            Configurações
+          </Button>
+        </Flex>
+      </Box>
     );
   }
 }
@@ -88,5 +113,7 @@ const mapDispatchToProps = (dispatch) => ({
 Login.propTypes = {
   userValues: PropTypes.func.isRequired,
   userToken: PropTypes.func.isRequired,
+  history: PropTypes.shape(Object).isRequired,
 };
+
 export default connect(null, mapDispatchToProps)(Login);
