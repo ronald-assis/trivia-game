@@ -180,7 +180,6 @@ export class GameScreen extends Component {
         maxWidth="full"
         className="game-screen"
       >
-        {/* {loading && <Loading />} */}
         { redirect && <Redirect to="/feedBack" /> }
         <Flex
           height="100vh"
