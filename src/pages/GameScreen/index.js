@@ -6,7 +6,6 @@ import { Box, Button, Container, Flex } from '@chakra-ui/react';
 import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
 import { registerToken, saveScore, saveHit } from '../../Redux/actions';
-import './GameScreen.css';
 import Game from '../../components/Game';
 import backgroundQuestion from '../../assets/img/empty-question.png';
 import Question from '../../components/Question';
