@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import { Box, Button, Container, Flex } from '@chakra-ui/react';
 import Header from '../../components/Header';
 import fetchTriviaApi from '../../services/triviaApi';
-import Loading from '../../components/Loading';
 import { registerToken, saveScore, saveHit } from '../../Redux/actions';
 import './GameScreen.css';
 import Game from '../../components/Game';
+import backgroundQuestion from '../../assets/img/empty-question.png';
+import Question from '../../components/Question';
 
 export class GameScreen extends Component {
   constructor() {
@@ -163,39 +165,59 @@ export class GameScreen extends Component {
     } = this.state;
     const response = results[question];
 
+    const backgroundColors = [
+      '#8DABD6',
+      '#7291BA',
+      '#58779F',
+      '#3E5F85',
+      '#23476B',
+    ];
+
     return (
-      <div className="game-screen">
-        {loading && <Loading />}
-        {redirect && <Redirect to="/feedBack" /> }
-        <Header />
-        <div className="main">
-          <p>{ counter }</p>
-          <p>
-            Pergunta:
-            {question + 1}
-          </p>
-          <div className="main-game">
-            <h2 data-testid="question-category">{response?.category}</h2>
-            <div className="question-and-options">
-              <h3 data-testid="question-text">{response?.question}</h3>
-              { unorderedAnswers.length > 1
+      <Container
+        height="100vh"
+        backgroundColor={ backgroundColors[question] }
+        maxWidth="full"
+        className="game-screen"
+      >
+        {/* {loading && <Loading />} */}
+        { redirect && <Redirect to="/feedBack" /> }
+        <Flex
+          height="100vh"
+          flexDir="column"
+          justifyContent="space-around"
+          alignItems="center"
+        >
+          <Header />
+          <Question
+            backgroundQuestion={ backgroundQuestion }
+            question={ question }
+            response={ response }
+            counter={ counter }
+            loading={ loading }
+          />
+          <Box width="full">
+            { unorderedAnswers.length > 1
                && <Game
                  stopCounting={ this.stopCounting }
                  timesUp={ timesUp }
                  answers={ unorderedAnswers[question] }
                /> }
-            </div>
+          </Box>
+          <Box width="full">
             { answered && (
-              <button
+              <Button
                 type="button"
                 onClick={ () => this.questionSequence() }
                 data-testid="btn-next"
+                width="full"
+                colorScheme="teal"
               >
                 Próximo
-              </button>)}
-          </div>
-        </div>
-      </div>
+              </Button>)}
+          </Box>
+        </Flex>
+      </Container>
     );
   }
 }

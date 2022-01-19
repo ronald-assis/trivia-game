@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Box, Input, Text, Button, Flex } from '@chakra-ui/react';
+import { Box, Input, Button, Flex } from '@chakra-ui/react';
 import { FaPlay } from 'react-icons/fa';
 import { MdBuild } from 'react-icons/md';
 import { registerToken, saveInfoUser } from '../../Redux/actions';
@@ -52,7 +52,6 @@ export class Login extends Component {
     return (
       <Box>
         <Box margin="2">
-          <Text color="yellow">Nome:</Text>
           <Input
             type="text"
             name="name"
@@ -62,10 +61,10 @@ export class Login extends Component {
             onChange={ this.handleInput }
             backgroundColor="white"
             borderColor="yellow"
+            placeholder="Nome"
           />
         </Box>
         <Box margin="2">
-          <Text color="yellow">Email:</Text>
           <Input
             type="email"
             name="email"
@@ -75,6 +74,7 @@ export class Login extends Component {
             onChange={ this.handleInput }
             backgroundColor="white"
             borderColor="yellow"
+            placeholder="Email"
           />
         </Box>
         <Flex flexDir="column" marginTop="4">

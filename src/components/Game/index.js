@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Button, Flex } from '@chakra-ui/react';
 
 const Game = ({ answers, timesUp, stopCounting }) => {
   const [correctAnswer, setCorrectAnswer] = useState('');
@@ -30,37 +31,50 @@ const Game = ({ answers, timesUp, stopCounting }) => {
   }, [timesUp, stopCounting]);
 
   return (
-    <div
-      className="answer-options"
+    <Flex
       data-testid="answer-options"
+      flexDir="column"
     >
       {answers && answers.map(({ answer, answerCorrect }, index) => (
         answerCorrect
           ? (
-            <button
+            <Button
               key="correct"
               type="button"
               data-testid="correct-answer"
               className={ correctAnswer }
               onClick={ () => borderAnswer(answerCorrect) }
               disabled={ timesUp }
+              backgroundColor={ correctAnswer ? 'green' : 'white' }
+              colorScheme="green"
+              color="black"
+              marginTop="2"
+              marginBottom="2"
+              width="full"
             >
               {answer}
-            </button>
+            </Button>
           )
           : (
-            <button
+            <Button
               key={ index }
               type="button"
               data-testid={ `wrong-answer-${index}` }
               className={ incorrectAnswer }
               onClick={ () => borderAnswer(answerCorrect) }
               disabled={ timesUp }
+              color="black"
+              backgroundColor={ incorrectAnswer ? 'red' : 'white' }
+              colorScheme="red"
+              marginTop="2"
+              marginBottom="2"
+              width="full"
             >
               {answer}
-            </button>)
+            </Button>
+          )
       ))}
-    </div>
+    </Flex>
   );
 };
 
