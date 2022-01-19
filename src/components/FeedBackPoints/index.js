@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import './feedBackPoints.css';
+import { Text } from '@chakra-ui/react';
 
 const FeedBackPoints = ({ hitsProps, scoreProps }) => {
   const pontsResult = () => {
@@ -11,24 +12,29 @@ const FeedBackPoints = ({ hitsProps, scoreProps }) => {
   };
   return (
     <div className="feedback-text">
-      <h3 data-testid="feedback-text">
-        {pontsResult()}
-      </h3>
       <div className="feedback-ranking">
-        <p>
+        <Text fontSize="22px" textAlign="center" color="white">
           {'Você acertou '}
           <span data-testid="feedback-total-question">
             { hitsProps }
           </span>
           {' questões!'}
-        </p>
-        <p>
+        </Text>
+        <Text fontSize="22px" textAlign="center" color="white">
           {'Um total de '}
           <span data-testid="feedback-total-score">
             {scoreProps}
           </span>
           {' pontos'}
-        </p>
+        </Text>
+        <Text
+          fontSize="22px"
+          textAlign="center"
+          color="white"
+          data-testid="feedback-text"
+        >
+          {pontsResult()}
+        </Text>
       </div>
     </div>
   );

@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Header from '../../components/Header';
+import { Button, Container, Flex, Heading, Image } from '@chakra-ui/react';
 import FeedBackPoints from '../../components/FeedBackPoints';
 import './feedback.css';
 import { eraseData } from '../../Redux/actions';
+import couldBeBetterImg from '../../assets/img/could-be-better.svg';
+import wellDoneImg from '../../assets/img/well-done.svg';
 
 export class Feedback extends Component {
   componentDidMount() {
@@ -26,34 +28,44 @@ export class Feedback extends Component {
   }
 
   render() {
+    const { assertions } = this.props;
+
+    const MIN_NUMBER = 3;
+    const feedbackImg = assertions >= MIN_NUMBER ? wellDoneImg : couldBeBetterImg;
+
     return (
-      <div className="feedback">
-        <Header />
-        <main>
-          <h1>
-            Feedback
-          </h1>
-          <FeedBackPoints />
-          <div>
-            <Link to="/">
-              <button
-                type="button"
-                data-testid="btn-play-again"
-              >
-                Play Again
-              </button>
-            </Link>
-            <Link to="/ranking">
-              <button
-                type="button"
-                data-testid="btn-ranking"
-              >
-                ranking
-              </button>
-            </Link>
-          </div>
-        </main>
-      </div>
+      <Container height="100vh" backgroundColor="#003153">
+        <Heading
+          textAlign="center"
+          paddingTop="8"
+          marginBottom="8"
+          color="white"
+        >
+          Feedback
+        </Heading>
+        <Image src={ feedbackImg } marginBottom="8" />
+        <FeedBackPoints />
+        <Flex marginTop="4" justifyContent="center">
+          <Link to="/">
+            <Button
+              type="button"
+              data-testid="btn-play-again"
+              marginRight="4"
+            >
+              Play Again
+            </Button>
+          </Link>
+          <Link to="/ranking">
+            <Button
+              type="button"
+              data-testid="btn-ranking"
+              colorScheme="cyan"
+            >
+              Ranking
+            </Button>
+          </Link>
+        </Flex>
+      </Container>
     );
   }
 }
@@ -66,6 +78,7 @@ const mapStateToProps = (state) => ({
   name: state.player.name,
   picture: state.player.picture,
   score: state.player.score,
+  assertions: state.player.assertions,
 });
 
 Feedback.propTypes = {
@@ -73,6 +86,7 @@ Feedback.propTypes = {
   picture: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
   eraseDataOnState: PropTypes.func.isRequired,
+  assertions: PropTypes.number.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Feedback);
