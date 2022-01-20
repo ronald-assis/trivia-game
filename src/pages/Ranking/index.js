@@ -35,14 +35,20 @@ class Ranking extends Component {
           Ranking
         </Heading>
         <Flex flexDir="column">
-          <Flex justifyContent="center">
-            <Box textAlign="center">
-              <Text fontSize="22px">1º lugar</Text>
-              <Avatar size="xl" src={ fiveFirstPlaces[0].picture } />
-              <Text fontSize="28px">{ fiveFirstPlaces[0].name }</Text>
-              <Text>{ `${fiveFirstPlaces[0].score} Pontos` }</Text>
-            </Box>
-          </Flex>
+          <Box textAlign="center" m="0 auto">
+            <Text fontSize="22px">1º lugar</Text>
+            <Avatar size="xl" src={ fiveFirstPlaces[0].picture } />
+            <Text
+              fontSize="28px"
+              data-testid="player-name-0"
+            >
+              { fiveFirstPlaces[0].name }
+            </Text>
+            <Text>
+              <span data-testid="player-score-0">{fiveFirstPlaces[0].score}</span>
+              <span> pontos</span>
+            </Text>
+          </Box>
           <Flex marginTop="4" justifyContent="space-evenly">
             <Box width="30%" textAlign="center">
               {
@@ -55,10 +61,14 @@ class Ranking extends Component {
                       textOverflow="clip"
                       whiteSpace="nowrap"
                       fontSize="18px"
+                      data-testid="player-name-1"
                     >
                       { fiveFirstPlaces[1].name }
                     </Text>
-                    <Text>{ `${fiveFirstPlaces[1].score} Pontos` }</Text>
+                    <Text>
+                      <span data-testid="player-name-1">{fiveFirstPlaces[1].score}</span>
+                      <span> pontos</span>
+                    </Text>
                   </>
                 ) : (
                   <>
@@ -88,10 +98,14 @@ class Ranking extends Component {
                       textOverflow="clip"
                       whiteSpace="nowrap"
                       fontSize="18px"
+                      data-testid="player-name-2"
                     >
                       { fiveFirstPlaces[2].name }
                     </Text>
-                    <Text>{ `${fiveFirstPlaces[2].score} Pontos` }</Text>
+                    <Text>
+                      <span data-testid="player-name-2">{fiveFirstPlaces[2].score}</span>
+                      <span> pontos</span>
+                    </Text>
                   </>
                 ) : (
                   <>
@@ -116,13 +130,13 @@ class Ranking extends Component {
               name={ fiveFirstPlaces[3] ? fiveFirstPlaces[3].name : undefined }
               score={ fiveFirstPlaces[3] ? fiveFirstPlaces[3].score : undefined }
               picture={ fiveFirstPlaces[3] ? fiveFirstPlaces[3].picture : undefined }
-              place="4"
+              place={ 4 }
             />
             <CardRanking
               name={ fiveFirstPlaces[4] ? fiveFirstPlaces[4].name : undefined }
               score={ fiveFirstPlaces[4] ? fiveFirstPlaces[4].score : undefined }
               picture={ fiveFirstPlaces[4] ? fiveFirstPlaces[4].picture : undefined }
-              place="5"
+              place={ 5 }
             />
           </Flex>
         </Flex>

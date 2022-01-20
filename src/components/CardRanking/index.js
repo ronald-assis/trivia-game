@@ -23,7 +23,10 @@ class CardRanking extends Component {
               <Box marginLeft="4">
                 <Text>{`${place}º lugar`}</Text>
                 <Text>
-                  { `${name} - ${score} pontos` }
+                  <span data-testid={ `player-name-${place - 1}` }>{name}</span>
+                  <span> - </span>
+                  <span data-testid={ `player-score-${place - 1}` }>{score}</span>
+                  <span> pontos</span>
                 </Text>
               </Box>
             </>
