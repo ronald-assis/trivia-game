@@ -8,27 +8,16 @@ import './feedback.css';
 import { eraseData } from '../../Redux/actions';
 import couldBeBetterImg from '../../assets/img/could-be-better.svg';
 import wellDoneImg from '../../assets/img/well-done.svg';
+import FeedbackToast from '../../components/FeedbackToast';
 
 export class Feedback extends Component {
-  componentDidMount() {
-    const { name, score, picture } = this.props;
-    const currPlayer = { name, score, picture };
-    const currRanking = JSON.parse(localStorage.getItem('ranking'));
-    if (currRanking) {
-      currRanking.push(currPlayer);
-      localStorage.setItem('ranking', JSON.stringify(currRanking));
-    } else {
-      localStorage.setItem('ranking', JSON.stringify([currPlayer]));
-    }
-  }
-
   componentWillUnmount() {
     const { eraseDataOnState } = this.props;
     eraseDataOnState();
   }
 
   render() {
-    const { assertions } = this.props;
+    const { assertions, name, score, picture } = this.props;
 
     const MIN_NUMBER = 3;
     const feedbackImg = assertions >= MIN_NUMBER ? wellDoneImg : couldBeBetterImg;
@@ -65,6 +54,11 @@ export class Feedback extends Component {
             </Button>
           </Link>
         </Flex>
+        <FeedbackToast
+          name={ name }
+          score={ score }
+          picture={ picture }
+        />
       </Container>
     );
   }
